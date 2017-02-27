@@ -1,0 +1,30 @@
+
+Viewgroup的事件分发 （扩展：view的事件分发）
+http://blog.csdn.net/lmj623565791/article/details/39102591
+
+http://blog.csdn.net/lmj623565791/article/details/38960443
+dispatch "分配，派遣"， intercept "拦截，截断"
+dispatchTouchEvent();
+onTouchEvent();
+onInterceptTouchEvent();
+View 
+View.dispatchEvent->View.setOnTouchListener->View.onTouchEvent 
+ViewGroup
+首先触发ViewGroup中的 dispatchTouchEvent();----> onInterceptTouchEvent();
+到 View 的 dispatchTouchEvent()---->onTouchEvent();
+
+  总结：
+1、如果ViewGroup找到了能够处理该事件的View，则直接交给子View处理，自己的onTouchEvent不会被触发；
+2、可以通过复写onInterceptTouchEvent(ev)方法，拦截子View的事件（即return true），
+   把事件交给自己处理，则会执行自己对应的onTouchEvent方法
+3、子View可以通过调用getParent().requestDisallowInterceptTouchEvent(true);  阻止ViewGroup对其MOVE或者UP事件 进行拦截；
+
+
+1，ViewGroup通过dispatchTouchEvent方法传递给interceptTouchEvent：
+   1）如果返回true ，则交给这个ViewGroup的onTouchEvent处理。
+   2）如果返回false，则交给子View的 dispatchTouchEvent方法处理。
+2，事件传递到子view 的 dispatchTouchEvent方法中，通过方法传递到当前View的onTouchEvent方法中：
+   1）如果返回true，那么这个事件就会止于该view。
+   2）如果返回 false ，那么这个事件会从这个子view 往上传递，而且都是传递到父View的onTouchEvent 来接收。
+   3）如果传递到ViewGroup的 onTouchEvent 也返回 false 的话，则继续传递到Activity的onTouchEvent中，
+      如果还是false,则这个 事件就会“消失“；事件向上传递到中间的任何onTouchEvent方法中，如果返回true，则事件被消费掉，不会再传递。
