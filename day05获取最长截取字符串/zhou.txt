@@ -1,0 +1,31 @@
+ private List<Integer> ints = new ArrayList<>();
+    @Test
+    public void TestA1(){
+
+        String str = "ababcdefad";
+        StringBuffer sb = new StringBuffer();
+        char[] chars = str.toCharArray();
+
+        for(int i = 0; i < chars.length; i ++){
+            int index = sb.indexOf(String.valueOf(chars[i]));
+           if(index == -1){
+               sb.append(chars[i]);
+               System.out.println("count = " + sb.length() + ",sb = " + sb.toString());
+           }else{
+               ints.add(sb.length());
+               System.out.println("count = " + sb.length() +",i =" +i + ",sb = " + sb.toString());
+               String s = sb.substring(index + 1,sb.length());
+               sb.setLength(0);
+               sb.append(s);
+               sb.append(chars[i]);
+               System.out.println("count = " + sb.length() + ",s = " + s +",index =" +index + ",sb = " + sb.toString());
+           }
+            if(i == chars.length -1){
+                System.out.println("sb = " + sb.toString());
+                ints.add(sb.length());
+            }
+        }
+//        Collections.sort(list);                                              //ÉýÐòÅÅÁÐ
+        Collections.sort(ints,Collections.reverseOrder());                 //½µÐòÅÅÁÐ
+        System.out.println("----count = " + ints.get(0) +",");
+    }
