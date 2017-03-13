@@ -1,0 +1,24 @@
+动画主要分为两种
+
+Animation
+逐帧动画：将一个完整的动画拆分成一张一张的图片，然后连贯的播放出来
+补间动画：设定一个动画的开始和结束，然后通过onDraw方法对View进行重绘，将中间的动画填充出来。但只能实现透明度、位移、大小、旋转四种效果。
+Animator 属性动画：Android在3.0版本中引入了属性动画，他是通过修改View的属性的值，来实现动画效果。之所以引入，是因为补间动画有几个缺陷：
+他的动画效果只是改变了View的显示效果，而没有使View进行真正的移动。比如View从屏幕左边移动到了右边，移动过后，我们点击移动到右边的View是不会触发点击事件的，因为View并没有进行真正的移动，而只是视觉上的移动到了右边，我们需要点击View之前的位置，才能触发点击事件。
+补间动画只能对View进行操作，非View是不能操作的（暂时还没想到应用场景）
+补间动画只能实现透明度、位移、大小、旋转四种效果。
+官方提供的库/类
+
+在3.0之后，可以直接使用ObjectAnimator/ValueAnimator来实现属性动画。
+View.animate().属性().start()
+ViewGroup在xml中可以指定animateLayoutChanges属性为true，这样当子View有增加、删除、修改时，会执行系统预设的动画效果。
+LayoutTransition和上面的类似，但他可以指定增加、删除等动作时执行的动画效果。
+VectorDrawable
+用共享组件实现Activity的某个子View与后面一个Activity的某个子View之间的过渡效果。
+ActivityOptionsCompat.makeSceneTransitionAnimation(Activity activity, View sharedElement, String sharedElementName)
+第三方库
+
+NineOldAndroids：主要是用来兼容3.0之前的版本，让3.0之前的系统也可以使用属性动画，现在很少用到了。
+rebound：Facebook提供的一个弹性动画库。
+lottie：Airbnb开源的一个项目，他可以使用After Effects来动画，然后通过Bodymovin插件来生成json文件。这样就可以将json文件导入到项目中，从而实现酷炫的动画效果，而且iOS也同样可以使用。
+awesome-android-ui：一个Android动画整理收集的文章。
