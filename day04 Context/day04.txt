@@ -1,2 +1,0 @@
-Android 中有几种Context，分别是什么？
-http://blog.csdn.net/singwhatiwanna/article/details/21829971
