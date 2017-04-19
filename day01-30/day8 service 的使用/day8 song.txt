@@ -1,0 +1,63 @@
+Service 两种启动方式 StartService 和 BindService
+Service 所有的生命周期：
+	onBind（)
+	onUnbind()
+	onCreate()
+	onStart()
+	onStartCommand()
+	onDestroy()
+	onRebind()
+
+#1.StartService()的方式
+	特点：调用者和service之间没有联系，即使调用者退出了，service还在运行。
+	调用方式: Context #startService(Intent)； Context #stopService(Intent)；
+	生命周期：onCreate() -->
+		  onStartCommand() -->
+		  onStart() -->
+		  onDestory()
+
+#2.BindService()的方式
+	特点：调用者和Service绑定在一起	,通过Binder对象操作service。调用者一旦退出，Service就停止了
+	调用方式： 1.在service 中创建Binder对象，并在onBind中返回创建的Binder对象
+		   2.在调用者（Activity）中创建ServiceConnection对象，实现两个回调：
+		     onServiceConnected(ComponentName name, IBinder service)：绑定成功后的回调
+			返回的IBinder对象就是在Service中创建的Binder对象,应该将此对象在调用者中保存下来，以保持和Service的通信。
+		    onServiceDisconnected(ComponentName name) 取消绑定后的回调。
+		   3.Context #bindService(Intent,ServiceConnection,int)绑定服务（第三个参数 int 表示绑定的操作方式）
+			     #unbindService(ServiceConnection)取消绑定
+	生命周期：onCreate() -->
+		  onBind() -->
+		  onUnBind() -->
+		  onDestroy() -->
+		  在此unBind() 出现崩溃（已经unBind()后再次unBind()会出现空指针）
+
+#3.混合模式下的生命周期
+	(1)启动方式：startService()  -->  bindService() :
+	   生命周期：onCreate() -->onStartCommand() --> onStart() ==> onBind()
+	   启动方式：bindService()   -->  startService()
+	   生命周期：onCreate() --> onBind() ==> onStartCommand() --> onStart()
+	
+	(2)启动方式 startService() --> startService():
+	   生命周期：onCreate() --> onStartCommand() --> onStart() ==> onStartCommand() --> onStart()
+	
+	(3)启动方式 bindService() --> bindService():
+ 	   生命周期：onCreate() --> onBind() ==> 无变化
+
+	(3)停止方式: 当两种启动方式都执行了：
+		stopService() -- > unBindService()
+		stopService() ：无变化
+		unBindService(): onUnBind() --> onDestory()
+
+	(4)停止方式: 当两种启动方式都执行了：
+		unBindService() -- > stopService()
+		unBindService(): onUnBind()
+		stopService(): onDestory()
+
+#4. onReBind()生命周期如何执行：
+	1.前提条件：onUnbind()方法返回true,而不是super
+	2.service被解绑，但没有销毁
+	3.执行bindService()
+	比如： startService() --> bindService() --> unBindService() --bindService()
+	     或者：
+	       在Activity中startService() --> bindService() --> 按下返回键 --> bindService()
+ 	
